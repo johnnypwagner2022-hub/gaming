@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Game Categories — Nexus Arcade</title>
+  <meta name="description" content="Browse free online games by category: Action, Puzzle, Racing, Sports, Shooter, and more.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="games.html">Games</a></li>
+    <li><a href="categories.html">Categories</a></li>
+    <li><a href="favorites.html">⭐ Favorites</a></li>
+  </ul>
+  <div class="nav-search">
+    <input type="text" placeholder="Search games…" id="nav-search-input">
+    <span class="search-icon">🔍</span>
+    <div class="search-results-dropdown" id="search-dropdown"></div>
+  </div>
+  <button class="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html">🏠 Home</a>
+  <a href="games.html">🎮 Games</a>
+  <a href="categories.html">📁 Categories</a>
+  <a href="favorites.html">⭐ Favorites</a>
+  <div class="mobile-search"><input type="text" placeholder="Search…" id="mobile-search-input"><span class="search-icon">🔍</span></div>
+</div>
+
+<!-- RECENTLY PLAYED -->
+<div class="recently-played-bar" id="recently-played-bar" style="display:none">
+  <div class="recently-played-inner"></div>
+</div>
+
+<!-- HERO -->
+<div class="category-hero">
+  <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:10px;">
+    <a href="index.html" style="color:var(--text-muted)">Home</a> › Categories
+  </div>
+  <h1>📁 Browse <span>Categories</span></h1>
+  <p>Find your favorite game type. From fast-paced action to mind-bending puzzles.</p>
+</div>
+
+<!-- AD TOP -->
+<div class="ad-banner ad-banner-top container" style="margin-top:16px">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90</span></div>
+</div>
+
+<!-- ALL CATEGORIES GRID -->
+<section class="section container">
+  <div class="section-header">
+    <h2>All <span>Categories</span></h2>
+  </div>
+  <div id="all-categories-grid" class="categories-grid"></div>
+</section>
+
+<!-- CATEGORY SECTIONS (one per category) -->
+<div id="category-sections" class="container"></div>
+
+<!-- AD BOTTOM -->
+<div class="ad-banner ad-banner-btm container">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90</span></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+        <p>Free browser games — play instantly.</p>
+      </div>
+      <div class="footer-col"><h4>Categories</h4><ul>
+        <li><a href="#action">Action</a></li>
+        <li><a href="#puzzle">Puzzle</a></li>
+        <li><a href="#racing">Racing</a></li>
+        <li><a href="#multiplayer">Multiplayer</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Browse</h4><ul>
+        <li><a href="games.html?sort=popular">Popular</a></li>
+        <li><a href="games.html?sort=trending">Trending</a></li>
+        <li><a href="games.html?sort=newest">New</a></li>
+        <li><a href="games.html?sort=rating">Top Rated</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Info</h4><ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="favorites.html">Favorites</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span class="accent">Nexus Arcade</span></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/games.js"></script>
+<script src="js/favorites.js"></script>
+<script>
+document.addEventListener('gamesLoaded', (e) => {
+  const games = e.detail;
+  const G = window.NexusGames;
+
+  // All categories overview
+  G.renderCategoriesGrid(document.getElementById('all-categories-grid'), games);
+
+  // Per-category sections
+  const sectionsEl = document.getElementById('category-sections');
+  const urlCat = new URLSearchParams(window.location.search).get('cat');
+
+  // Either show one category (from URL) or all
+  const catsToShow = urlCat
+    ? G.CATEGORIES.filter(c => c.name === urlCat)
+    : G.CATEGORIES;
+
+  sectionsEl.innerHTML = catsToShow.map(cat => {
+    const catGames = games.filter(g => g.category === cat.name);
+    if (catGames.length === 0) return '';
+    return `
+      <div class="category-section" id="${cat.name.toLowerCase()}">
+        <div class="section-header">
+          <h2>${cat.icon} <span>${cat.name}</span> Games <small style="font-size:0.6em;color:var(--text-muted);font-family:'Share Tech Mono',monospace;">(${catGames.length})</small></h2>
+          <a href="games.html?cat=${encodeURIComponent(cat.name)}" class="view-all">All ${cat.name} →</a>
+        </div>
+        <div class="games-grid" id="grid-${cat.name.toLowerCase()}"></div>
+      </div>`;
+  }).join('');
+
+  // Render each grid
+  catsToShow.forEach(cat => {
+    const catGames = games.filter(g => g.category === cat.name).slice(0, 8);
+    const grid = document.getElementById(`grid-${cat.name.toLowerCase()}`);
+    if (grid && catGames.length > 0) G.renderGamesGrid(grid, catGames);
+  });
+
+  // If URL has a specific cat, scroll to it
+  if (urlCat) {
+    const anchor = document.getElementById(urlCat.toLowerCase());
+    if (anchor) setTimeout(() => anchor.scrollIntoView({ behavior: 'smooth', block: 'start' }), 300);
+  }
+});
+</script>
+</body>
+</html>

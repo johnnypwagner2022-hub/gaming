@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title id="page-title">Loading Game… — Nexus Arcade</title>
+  <meta name="description" id="page-desc" content="Play free online games at Nexus Arcade.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    .game-layout { align-items: start; }
+    .ad-sidebar-wrap { position: sticky; top: calc(var(--nav-h) + 16px); }
+  </style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="games.html">Games</a></li>
+    <li><a href="categories.html">Categories</a></li>
+    <li><a href="favorites.html">⭐ Favorites</a></li>
+  </ul>
+  <div class="nav-search">
+    <input type="text" placeholder="Search games…" id="nav-search-input">
+    <span class="search-icon">🔍</span>
+    <div class="search-results-dropdown" id="search-dropdown"></div>
+  </div>
+  <button class="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html">🏠 Home</a>
+  <a href="games.html">🎮 Games</a>
+  <a href="categories.html">📁 Categories</a>
+  <a href="favorites.html">⭐ Favorites</a>
+  <div class="mobile-search"><input type="text" placeholder="Search…" id="mobile-search-input"><span class="search-icon">🔍</span></div>
+</div>
+
+<!-- RECENTLY PLAYED -->
+<div class="recently-played-bar" id="recently-played-bar" style="display:none">
+  <div class="recently-played-inner"></div>
+</div>
+
+<!-- AD TOP -->
+<div class="ad-banner ad-banner-top container" style="margin-top:16px">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90</span></div>
+</div>
+
+<!-- GAME AREA -->
+<div class="game-layout container" id="game-layout">
+  <!-- ─ MAIN ─ -->
+  <div class="game-main">
+
+    <!-- Breadcrumb + title -->
+    <div class="game-header-info" id="game-header">
+      <div>
+        <div style="font-size:0.75rem;color:var(--text-muted);margin-bottom:6px;">
+          <a href="index.html" style="color:var(--text-muted)">Home</a>
+          <span style="margin:0 6px">›</span>
+          <a href="games.html" style="color:var(--text-muted)">Games</a>
+          <span style="margin:0 6px">›</span>
+          <span id="breadcrumb-cat" style="color:var(--cyan)">Loading…</span>
+        </div>
+        <h1 id="game-title">Loading Game…</h1>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+        <span class="game-meta-pill"><span class="dot"></span><span id="meta-cat">—</span></span>
+        <span class="game-meta-pill">⭐ <span id="meta-rating">—</span></span>
+        <span class="game-meta-pill">🎮 <span id="meta-plays">—</span> plays</span>
+        <button class="btn btn-ghost btn-sm" id="fav-main-btn" onclick="toggleMainFav()">🤍 Favorite</button>
+      </div>
+    </div>
+
+    <!-- Game player -->
+    <div class="game-player-wrapper">
+      <div class="game-player-bar">
+        <span class="game-player-title" id="player-title">—</span>
+        <div class="game-player-actions">
+          <button class="player-action-btn" title="Reload game" onclick="reloadGame()">🔄</button>
+          <button class="player-action-btn" title="Fullscreen" onclick="goFullscreen()">⛶</button>
+          <button class="player-action-btn" title="Favorite" id="player-fav-btn" onclick="toggleMainFav()">🤍</button>
+        </div>
+      </div>
+      <div class="game-iframe-container" id="iframe-container">
+        <div class="game-loading-screen" id="loading-screen">
+          <div class="loader-ring"></div>
+          <p>Loading game…</p>
+        </div>
+        <iframe id="game-iframe"
+                src="about:blank"
+                allowfullscreen
+                allow="autoplay; fullscreen; gamepad; accelerometer; gyroscope"
+                scrolling="no"
+                frameborder="0"
+                title="Game player"></iframe>
+      </div>
+    </div>
+
+    <!-- Star rating widget -->
+    <div class="game-info-card" style="margin-top:16px">
+      <h4>Rate This Game</h4>
+      <div class="star-rating-widget">
+        <p>Your rating:</p>
+        <div class="stars-input" id="stars-input">
+          <span class="star" data-val="1">⭐</span>
+          <span class="star" data-val="2">⭐</span>
+          <span class="star" data-val="3">⭐</span>
+          <span class="star" data-val="4">⭐</span>
+          <span class="star" data-val="5">⭐</span>
+        </div>
+        <span id="rating-msg" style="font-size:0.8rem;color:var(--text-muted)"></span>
+      </div>
+    </div>
+
+    <!-- Info cards -->
+    <div class="game-info-section">
+      <div class="game-info-card">
+        <h4>About This Game</h4>
+        <p id="game-description">Loading description…</p>
+      </div>
+      <div class="game-info-card">
+        <h4>How to Play</h4>
+        <p id="game-controls">Loading controls…</p>
+      </div>
+    </div>
+
+    <!-- Comments -->
+    <div class="comments-section">
+      <h3>💬 Comments</h3>
+      <div class="comment-form">
+        <input type="text" id="comment-input" placeholder="Write a comment… (press Enter)" maxlength="200">
+        <button class="btn btn-primary btn-sm" onclick="submitComment()">Post</button>
+      </div>
+      <div id="comments-list"></div>
+    </div>
+
+    <!-- Ad between content -->
+    <div class="ad-banner ad-banner-mid" style="margin-top:16px">
+      <div class="ad-label"><strong>ADVERTISEMENT</strong><span>970 × 100</span></div>
+    </div>
+
+    <!-- Related games -->
+    <div style="margin-top:24px">
+      <div class="section-header">
+        <h2>🕹️ <span>More</span> Like This</h2>
+        <a href="games.html" class="view-all">All Games →</a>
+      </div>
+      <div class="games-grid" id="related-grid"></div>
+    </div>
+  </div>
+
+  <!-- ─ SIDEBAR ─ -->
+  <div class="game-sidebar ad-sidebar-wrap">
+    <div class="ad-sidebar">AD<br>SPACE<br>160×600</div>
+
+    <!-- Leaderboard -->
+    <div class="game-info-card" style="width:200px">
+      <h4>🏆 Top Scores</h4>
+      <div id="leaderboard-list" style="font-size:0.78rem;"></div>
+    </div>
+  </div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+        <p>Free browser games — play instantly.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="games.html">All Games</a></li>
+        <li><a href="categories.html">Categories</a></li>
+        <li><a href="favorites.html">Favorites</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Categories</h4><ul>
+        <li><a href="categories.html?cat=Action">Action</a></li>
+        <li><a href="categories.html?cat=Puzzle">Puzzle</a></li>
+        <li><a href="categories.html?cat=Racing">Racing</a></li>
+        <li><a href="categories.html?cat=Sports">Sports</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Info</h4><ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span class="accent">Nexus Arcade</span></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/games.js"></script>
+<script src="js/favorites.js"></script>
+<script>
+let currentGame = null;
+
+/* ── Load game on page ready ── */
+document.addEventListener('gamesLoaded', (e) => {
+  const games = e.detail;
+  const id = parseInt(window.NexusArcade.getParam('id'), 10);
+  if (!id) { window.location.href = 'games.html'; return; }
+
+  currentGame = games.find(g => g.id === id);
+  if (!currentGame) { window.location.href = 'games.html'; return; }
+
+  populatePage(currentGame, games);
+});
+
+function populatePage(game, allGames) {
+  const { NexusArcade: A, NexusGames: G, NexusFavorites: F } = window;
+
+  // Meta
+  document.title = `${game.title} — Nexus Arcade`;
+  document.getElementById('page-title').textContent = `${game.title} — Nexus Arcade`;
+  document.getElementById('page-desc').content = game.description;
+
+  // Header
+  document.getElementById('game-title').textContent = game.title;
+  document.getElementById('player-title').textContent = game.title;
+  document.getElementById('breadcrumb-cat').textContent = game.category;
+  document.getElementById('meta-cat').textContent = game.category;
+  document.getElementById('meta-rating').textContent = game.rating;
+  document.getElementById('meta-plays').textContent = A.formatPlays(game.plays);
+  document.getElementById('game-description').textContent = game.description;
+  document.getElementById('game-controls').textContent = game.controls;
+
+  // Fav state
+  updateFavBtns(game.id);
+
+  // Load iframe after short delay (simulate ad/loading)
+  const iframe   = document.getElementById('game-iframe');
+  const loadScreen = document.getElementById('loading-screen');
+  iframe.addEventListener('load', () => loadScreen.classList.add('hidden'));
+  setTimeout(() => {
+    iframe.src = game.url;
+    A.addToRecentlyPlayed(game);
+    A.incrementPlayCount(game.id);
+  }, 800);
+
+  // Related games
+  const related = G.getRelatedGames(game, allGames, 4);
+  G.renderGamesGrid(document.getElementById('related-grid'), related);
+
+  // Star rating init
+  initStarRating(game.id);
+
+  // Comments init
+  renderComments(game.id);
+
+  // Leaderboard
+  renderLeaderboard(game.id);
+}
+
+/* ── Fullscreen ── */
+function goFullscreen() {
+  const container = document.getElementById('iframe-container');
+  if (container.requestFullscreen)      container.requestFullscreen();
+  else if (container.webkitRequestFullscreen) container.webkitRequestFullscreen();
+}
+
+/* ── Reload ── */
+function reloadGame() {
+  const iframe = document.getElementById('game-iframe');
+  iframe.src = iframe.src;
+  document.getElementById('loading-screen').classList.remove('hidden');
+}
+
+/* ── Fav ── */
+function toggleMainFav() {
+  if (!currentGame) return;
+  const isNow = window.NexusFavorites.toggle(currentGame.id);
+  updateFavBtns(currentGame.id);
+  window.NexusArcade.showToast(isNow ? '❤️ Added to favorites!' : '💔 Removed from favorites', isNow ? 'fav' : 'info');
+}
+function updateFavBtns(id) {
+  const isFav = window.NexusFavorites.isFavorite(id);
+  const txt   = isFav ? '❤️ Favorited' : '🤍 Favorite';
+  const icon  = isFav ? '❤️' : '🤍';
+  document.getElementById('fav-main-btn').textContent = txt;
+  document.getElementById('fav-main-btn').classList.toggle('btn-pink', isFav);
+  document.getElementById('player-fav-btn').textContent = icon;
+}
+
+/* ── Star rating ── */
+function initStarRating(gameId) {
+  const stars = document.querySelectorAll('#stars-input .star');
+  const msg = document.getElementById('rating-msg');
+  const ratingKey = `nexus_rating_${gameId}`;
+  const savedRating = parseInt(localStorage.getItem(ratingKey) || '0', 10);
+
+  if (savedRating) {
+    setStars(savedRating);
+    msg.textContent = `You rated: ${savedRating}/5`;
+  }
+
+  stars.forEach(star => {
+    star.addEventListener('mouseover', () => highlightStars(parseInt(star.dataset.val)));
+    star.addEventListener('mouseleave', () => setStars(savedRating || 0));
+    star.addEventListener('click', () => {
+      const val = parseInt(star.dataset.val);
+      localStorage.setItem(ratingKey, val);
+      setStars(val);
+      msg.textContent = `You rated: ${val}/5 ⭐`;
+      window.NexusArcade.showToast(`Thanks for rating ${val}/5!`, 'success');
+    });
+  });
+
+  function highlightStars(n) {
+    stars.forEach((s, i) => s.classList.toggle('lit', i < n));
+  }
+  function setStars(n) {
+    stars.forEach((s, i) => s.classList.toggle('lit', i < n));
+  }
+}
+
+/* ── Comments ── */
+const COMMENT_KEY_PREFIX = 'nexus_comments_';
+function getComments(gameId) {
+  try { return JSON.parse(localStorage.getItem(COMMENT_KEY_PREFIX + gameId) || '[]'); }
+  catch { return []; }
+}
+function saveComments(gameId, comments) {
+  localStorage.setItem(COMMENT_KEY_PREFIX + gameId, JSON.stringify(comments));
+}
+
+function renderComments(gameId) {
+  const list = document.getElementById('comments-list');
+  const comments = getComments(gameId);
+  if (comments.length === 0) {
+    list.innerHTML = '<p style="color:var(--text-muted);font-size:0.82rem;text-align:center;padding:12px 0">No comments yet. Be the first!</p>';
+    return;
+  }
+  list.innerHTML = comments.map(c => `
+    <div class="comment-item">
+      <div class="comment-avatar">${c.author.charAt(0).toUpperCase()}</div>
+      <div class="comment-body">
+        <div class="comment-author">${window.NexusArcade.sanitize(c.author)}</div>
+        <div class="comment-text">${window.NexusArcade.sanitize(c.text)}</div>
+        <div class="comment-time">${c.time}</div>
+      </div>
+    </div>`).join('');
+}
+
+function submitComment() {
+  if (!currentGame) return;
+  const input = document.getElementById('comment-input');
+  const text = input.value.trim();
+  if (!text) return;
+
+  const names = ['GamerX', 'ProPlayer', 'ArcadeFan', 'NexusUser', 'PixelHero'];
+  const author = names[Math.floor(Math.random() * names.length)] + Math.floor(Math.random() * 99);
+  const time = new Date().toLocaleString();
+
+  const comments = getComments(currentGame.id);
+  comments.unshift({ author, text, time });
+  if (comments.length > 20) comments.pop();
+  saveComments(currentGame.id, comments);
+
+  input.value = '';
+  renderComments(currentGame.id);
+  window.NexusArcade.showToast('Comment posted!', 'success');
+}
+
+// Submit on Enter
+document.getElementById('comment-input')?.addEventListener('keydown', (e) => {
+  if (e.key === 'Enter') submitComment();
+});
+
+/* ── Leaderboard (simulated) ── */
+function renderLeaderboard(gameId) {
+  const key = `nexus_lb_${gameId}`;
+  let scores;
+  try { scores = JSON.parse(localStorage.getItem(key) || 'null'); } catch { scores = null; }
+
+  if (!scores) {
+    const names = ['ArcadeKing', 'PixelWizard', 'GameMaster', 'NexusPro', 'UltraGamer'];
+    scores = names.map((n, i) => ({
+      name: n,
+      score: Math.floor(Math.random() * 50000) + 5000 * (5 - i),
+    })).sort((a, b) => b.score - a.score);
+    localStorage.setItem(key, JSON.stringify(scores));
+  }
+
+  const el = document.getElementById('leaderboard-list');
+  const medals = ['🥇', '🥈', '🥉', '4.', '5.'];
+  el.innerHTML = scores.slice(0, 5).map((s, i) => `
+    <div style="display:flex;justify-content:space-between;padding:5px 0;border-bottom:1px solid var(--border)">
+      <span>${medals[i]} ${s.name}</span>
+      <span style="color:var(--cyan);font-family:'Share Tech Mono',monospace;font-size:0.72rem">${s.score.toLocaleString()}</span>
+    </div>`).join('');
+}
+</script>
+</body>
+</html>

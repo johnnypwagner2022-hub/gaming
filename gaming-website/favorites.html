@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Favorites — Nexus Arcade</title>
+  <meta name="description" content="Your saved favorite games on Nexus Arcade.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="games.html">Games</a></li>
+    <li><a href="categories.html">Categories</a></li>
+    <li><a href="favorites.html">⭐ Favorites</a></li>
+  </ul>
+  <div class="nav-search">
+    <input type="text" placeholder="Search games…" id="nav-search-input">
+    <span class="search-icon">🔍</span>
+    <div class="search-results-dropdown" id="search-dropdown"></div>
+  </div>
+  <button class="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html">🏠 Home</a>
+  <a href="games.html">🎮 Games</a>
+  <a href="categories.html">📁 Categories</a>
+  <a href="favorites.html">⭐ Favorites</a>
+  <div class="mobile-search"><input type="text" placeholder="Search…" id="mobile-search-input"><span class="search-icon">🔍</span></div>
+</div>
+
+<!-- RECENTLY PLAYED -->
+<div class="recently-played-bar" id="recently-played-bar" style="display:none">
+  <div class="recently-played-inner"></div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>⭐ My Favorites</h1>
+  <p>Games you've saved — <span id="fav-count">0</span> saved game<span id="fav-plural">s</span>.</p>
+</div>
+
+<!-- AD TOP -->
+<div class="ad-banner ad-banner-top container" style="margin-top:16px">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90</span></div>
+</div>
+
+<!-- FAVORITES CONTENT -->
+<main class="container section">
+  <!-- Empty state -->
+  <div class="favorites-empty" id="favorites-empty">
+    <span class="icon">🤍</span>
+    <h2>No favorites yet</h2>
+    <p>Click the ❤️ icon on any game to save it here for quick access.</p>
+    <a href="games.html" class="btn btn-primary btn-lg">🎮 Browse Games</a>
+  </div>
+
+  <!-- Favorites grid -->
+  <div class="games-grid games-grid-lg" id="favorites-grid"></div>
+
+  <!-- Clear button (shown when there are favs) -->
+  <div id="clear-btn-wrap" class="hidden" style="text-align:center;margin-top:32px;">
+    <button class="btn btn-ghost" onclick="clearAllFavs()" style="border-color:rgba(255,0,110,0.3);color:var(--pink)">
+      🗑️ Clear All Favorites
+    </button>
+  </div>
+</main>
+
+<!-- DISCOVER MORE -->
+<section class="section" style="background:var(--bg-deep);border-top:1px solid var(--border)">
+  <div class="container">
+    <div class="section-header">
+      <h2>🎮 Discover More <span>Games</span></h2>
+      <a href="games.html" class="view-all">All Games →</a>
+    </div>
+    <div id="discover-grid" class="games-grid"></div>
+  </div>
+</section>
+
+<!-- AD BOTTOM -->
+<div class="ad-banner ad-banner-btm container">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90</span></div>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+        <p>Free browser games — play instantly.</p>
+      </div>
+      <div class="footer-col"><h4>Navigation</h4><ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="games.html">All Games</a></li>
+        <li><a href="categories.html">Categories</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Browse</h4><ul>
+        <li><a href="games.html?sort=popular">Popular</a></li>
+        <li><a href="games.html?sort=trending">Trending</a></li>
+        <li><a href="games.html?sort=newest">New</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Info</h4><ul>
+        <li><a href="#">About</a></li>
+        <li><a href="#">Privacy</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span class="accent">Nexus Arcade</span></p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/games.js"></script>
+<script src="js/favorites.js"></script>
+<script>
+document.addEventListener('gamesLoaded', (e) => {
+  const games = e.detail;
+
+  // Render discover section with random selection
+  const discover = [...games].sort(() => Math.random() - 0.5).slice(0, 8);
+  window.NexusGames.renderGamesGrid(document.getElementById('discover-grid'), discover);
+
+  // Update favorites display
+  refreshFavoritesDisplay(games);
+});
+
+function refreshFavoritesDisplay(games) {
+  const favs = window.NexusFavorites.getFavorites();
+  const countEl = document.getElementById('fav-count');
+  const pluralEl = document.getElementById('fav-plural');
+  const emptyEl = document.getElementById('favorites-empty');
+  const gridEl = document.getElementById('favorites-grid');
+  const clearWrap = document.getElementById('clear-btn-wrap');
+
+  if (countEl) countEl.textContent = favs.length;
+  if (pluralEl) pluralEl.textContent = favs.length === 1 ? '' : 's';
+
+  if (favs.length === 0) {
+    emptyEl?.classList.remove('hidden');
+    gridEl.innerHTML = '';
+    clearWrap?.classList.add('hidden');
+    return;
+  }
+
+  emptyEl?.classList.add('hidden');
+  clearWrap?.classList.remove('hidden');
+
+  // Merge with full game data
+  const fullFavs = favs.map(f => games.find(g => g.id === f.id) || f);
+  window.NexusGames.renderGamesGrid(gridEl, fullFavs);
+}
+
+function clearAllFavs() {
+  if (!confirm('Remove all favorites? This cannot be undone.')) return;
+  localStorage.removeItem('nexus_favs');
+  const games = window.NexusArcade.getGames();
+  refreshFavoritesDisplay(games);
+  window.NexusArcade.showToast('All favorites cleared.', 'info');
+}
+
+window.clearAllFavs = clearAllFavs;
+</script>
+</body>
+</html>

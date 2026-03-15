@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Nexus Arcade — Free Online Games</title>
+  <meta name="description" content="Play hundreds of free online games instantly in your browser. No downloads. Action, puzzle, racing, multiplayer and more!">
+  <meta name="keywords" content="free online games, browser games, arcade games, play games online, no download games">
+  <meta property="og:title" content="Nexus Arcade — Free Online Games">
+  <meta property="og:description" content="Play hundreds of free games instantly. No downloads required.">
+  <meta property="og:type" content="website">
+  <!-- Google Analytics placeholder -->
+  <!-- <script async src="https://www.googletagmanager.com/gtag/js?id=GA_MEASUREMENT_ID"></script> -->
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+
+<!-- ══════════════════ NAV ══════════════════ -->
+<nav class="navbar" role="navigation" aria-label="Main navigation">
+  <a href="index.html" class="nav-logo" aria-label="Nexus Arcade Home">
+    <div class="logo-icon">🎮</div>
+    NEXUS ARCADE
+  </a>
+  <ul class="nav-links" role="list">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="games.html">Games</a></li>
+    <li><a href="categories.html">Categories</a></li>
+    <li><a href="favorites.html">⭐ Favorites</a></li>
+  </ul>
+  <div class="nav-search" role="search">
+    <input type="text" placeholder="Search games…" aria-label="Search games" autocomplete="off" id="nav-search-input">
+    <span class="search-icon" aria-hidden="true">🔍</span>
+    <div class="search-results-dropdown" id="search-dropdown" role="listbox"></div>
+  </div>
+  <button class="hamburger" aria-label="Open menu" aria-expanded="false" aria-controls="mobile-nav">
+    <span></span><span></span><span></span>
+  </button>
+</nav>
+<div class="mobile-nav" id="mobile-nav" role="navigation">
+  <a href="index.html">🏠 Home</a>
+  <a href="games.html">🎮 Games</a>
+  <a href="categories.html">📁 Categories</a>
+  <a href="favorites.html">⭐ Favorites</a>
+  <div class="mobile-search">
+    <input type="text" placeholder="Search games…" id="mobile-search-input">
+    <span class="search-icon">🔍</span>
+  </div>
+</div>
+
+<!-- ══ AD BANNER TOP ══ -->
+<div class="ad-banner ad-banner-top container" style="margin-top:16px;margin-bottom:0">
+  <!-- Google AdSense: replace with actual ad tag -->
+  <!-- <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-XXXXXXXX"></script> -->
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90 Banner Ad</span></div>
+</div>
+
+<!-- ══════════════════ HERO ══════════════════ -->
+<section class="hero" aria-labelledby="hero-title">
+  <div class="hero-content container">
+    <span class="hero-eyebrow">Now Playing</span>
+    <h1 id="hero-title">
+      Play Free<br>
+      <span class="accent">Browser Games</span><br>
+      Instantly.
+    </h1>
+    <p>No downloads. No installs. Just click and play. Hundreds of action, puzzle, racing, and multiplayer games — all in your browser.</p>
+    <div class="hero-actions">
+      <a href="games.html" class="btn btn-primary btn-lg">🎮 Browse All Games</a>
+      <a href="categories.html" class="btn btn-ghost btn-lg">📁 Categories</a>
+    </div>
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <span class="num" id="stat-games">25+</span>
+        <span class="lbl">Games</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">10</span>
+        <span class="lbl">Categories</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">0</span>
+        <span class="lbl">Downloads</span>
+      </div>
+      <div class="hero-stat">
+        <span class="num">Free</span>
+        <span class="lbl">Always</span>
+      </div>
+    </div>
+  </div>
+  <div class="hero-visual" aria-hidden="true">
+    <div class="hero-float-cards" id="hero-float-cards"></div>
+  </div>
+</section>
+
+<!-- ══ RECENTLY PLAYED ══ -->
+<div class="recently-played-bar" id="recently-played-bar" style="display:none">
+  <div class="recently-played-inner"></div>
+</div>
+
+<!-- ══════════════════ FEATURED ══════════════════ -->
+<section class="section container" aria-labelledby="featured-heading">
+  <div class="section-header">
+    <h2 id="featured-heading">🏆 <span>Featured</span> Games</h2>
+    <a href="games.html" class="view-all">View All →</a>
+  </div>
+  <!-- Featured main grid: large + small -->
+  <div id="featured-grid" class="games-grid games-grid-lg"></div>
+</section>
+
+<!-- ══ AD MID ══ -->
+<div class="ad-banner ad-banner-mid container">
+  <!-- Google AdSense placement -->
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>970 × 100 Mid-Page Banner</span></div>
+</div>
+
+<!-- ══════════════════ TRENDING ══════════════════ -->
+<section class="section container" style="padding-top:0" aria-labelledby="trending-heading">
+  <div class="section-header">
+    <h2 id="trending-heading">🔥 <span>Trending</span> Now</h2>
+    <a href="games.html?sort=trending" class="view-all">See More →</a>
+  </div>
+  <div id="trending-grid" class="games-grid"></div>
+</section>
+
+<!-- ══════════════════ CATEGORIES ══════════════════ -->
+<section class="section" style="background:var(--bg-deep);border-top:1px solid var(--border);border-bottom:1px solid var(--border)"
+         aria-labelledby="cats-heading">
+  <div class="container">
+    <div class="section-header">
+      <h2 id="cats-heading">📁 <span>Browse</span> by Category</h2>
+      <a href="categories.html" class="view-all">All Categories →</a>
+    </div>
+    <div id="categories-grid" class="categories-grid"></div>
+  </div>
+</section>
+
+<!-- ══════════════════ RECENTLY ADDED ══════════════════ -->
+<section class="section container" aria-labelledby="recent-heading">
+  <div class="section-header">
+    <h2 id="recent-heading">🆕 <span>Recently</span> Added</h2>
+    <a href="games.html?sort=newest" class="view-all">See All →</a>
+  </div>
+  <div id="recent-grid" class="games-grid"></div>
+</section>
+
+<!-- ══ AD BOTTOM ══ -->
+<div class="ad-banner ad-banner-btm container">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90 Footer Banner</span></div>
+</div>
+
+<!-- ══════════════════ FOOTER ══════════════════ -->
+<footer role="contentinfo">
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+        <p>Your ultimate destination for free online games. Play instantly — no downloads, no accounts required.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Games</h4>
+        <ul>
+          <li><a href="games.html?sort=trending">Trending</a></li>
+          <li><a href="games.html?sort=newest">New Games</a></li>
+          <li><a href="games.html?sort=popular">Most Played</a></li>
+          <li><a href="favorites.html">My Favorites</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Categories</h4>
+        <ul>
+          <li><a href="categories.html?cat=Action">Action</a></li>
+          <li><a href="categories.html?cat=Puzzle">Puzzle</a></li>
+          <li><a href="categories.html?cat=Racing">Racing</a></li>
+          <li><a href="categories.html?cat=Multiplayer">Multiplayer</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Info</h4>
+        <ul>
+          <li><a href="#">About</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Terms of Service</a></li>
+          <li><a href="admin.html">Admin Panel</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span class="accent">Nexus Arcade</span> — All games are property of their respective owners.</p>
+      <p class="font-mono">Built with ❤️ for <span class="accent">gamers</span></p>
+    </div>
+  </div>
+</footer>
+
+<!-- Scripts -->
+<script src="js/main.js"></script>
+<script src="js/games.js"></script>
+<script src="js/favorites.js"></script>
+<script>
+/* ── Homepage init ── */
+document.addEventListener('gamesLoaded', (e) => {
+  const games = e.detail;
+  const { NexusGames: G } = window;
+
+  // Update stat counter
+  document.getElementById('stat-games').textContent = games.length + '+';
+
+  // Featured
+  const featured = G.getFeaturedGames(games, 6);
+  G.renderGamesGrid(document.getElementById('featured-grid'), featured);
+
+  // Trending
+  const trending = G.getTrendingGames(games, 8);
+  G.renderGamesGrid(document.getElementById('trending-grid'), trending);
+
+  // Categories
+  G.renderCategoriesGrid(document.getElementById('categories-grid'), games);
+
+  // Recently added
+  const recent = G.getRecentGames(games, 8);
+  G.renderGamesGrid(document.getElementById('recent-grid'), recent);
+
+  // Hero float cards
+  const heroCards = document.getElementById('hero-float-cards');
+  if (heroCards) {
+    heroCards.innerHTML = featured.slice(0, 4).map(g => `
+      <div class="hero-float-card">
+        <img src="${g.thumbnail}" alt="${g.title}" loading="lazy">
+        <div class="fc-title">${g.title}</div>
+      </div>`).join('');
+  }
+});
+</script>
+</body>
+</html>

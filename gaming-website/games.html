@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>All Games — Nexus Arcade</title>
+  <meta name="description" content="Browse all free online games. Filter by category, sort by popularity, rating, and more.">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+</head>
+<body>
+
+<!-- NAV -->
+<nav class="navbar">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Home</a></li>
+    <li><a href="games.html">Games</a></li>
+    <li><a href="categories.html">Categories</a></li>
+    <li><a href="favorites.html">⭐ Favorites</a></li>
+  </ul>
+  <div class="nav-search">
+    <input type="text" placeholder="Search games…" id="nav-search-input">
+    <span class="search-icon">🔍</span>
+    <div class="search-results-dropdown" id="search-dropdown"></div>
+  </div>
+  <button class="hamburger" aria-label="Open menu"><span></span><span></span><span></span></button>
+</nav>
+<div class="mobile-nav" id="mobile-nav">
+  <a href="index.html">🏠 Home</a>
+  <a href="games.html">🎮 Games</a>
+  <a href="categories.html">📁 Categories</a>
+  <a href="favorites.html">⭐ Favorites</a>
+  <div class="mobile-search"><input type="text" placeholder="Search…" id="mobile-search-input"><span class="search-icon">🔍</span></div>
+</div>
+
+<!-- PAGE HEADER -->
+<div class="page-header">
+  <h1>🎮 All Games</h1>
+  <p>Browse our full collection of free browser games.</p>
+</div>
+
+<!-- RECENTLY PLAYED -->
+<div class="recently-played-bar" id="recently-played-bar" style="display:none">
+  <div class="recently-played-inner"></div>
+</div>
+
+<!-- AD TOP -->
+<div class="ad-banner ad-banner-top container" style="margin-top:16px">
+  <div class="ad-label"><strong>ADVERTISEMENT</strong><span>728 × 90</span></div>
+</div>
+
+<!-- FILTERS BAR -->
+<div class="filters-bar" id="filters-bar">
+  <!-- Category tabs (filled by JS) -->
+  <div class="filter-group">
+    <span class="filter-label">Category</span>
+    <div class="filter-tabs" id="category-tabs">
+      <button class="filter-tab active" data-cat="All">All</button>
+    </div>
+  </div>
+
+  <!-- Sort -->
+  <div class="filter-group">
+    <span class="filter-label">Sort</span>
+    <select class="filter-select" id="sort-select">
+      <option value="popular">Popular</option>
+      <option value="trending">Trending 🔥</option>
+      <option value="newest">Newest</option>
+      <option value="rating">Rating ⭐</option>
+      <option value="alpha">A–Z</option>
+    </select>
+  </div>
+
+  <!-- Page search -->
+  <div class="page-search" style="flex:1;max-width:260px">
+    <input type="text" id="page-search-input" placeholder="Search games…" autocomplete="off">
+    <span class="search-icon">🔍</span>
+  </div>
+
+  <span class="count-display" id="results-count">— games</span>
+</div>
+
+<!-- GAMES GRID -->
+<main class="container section-sm">
+  <div class="games-grid games-grid-lg" id="games-grid">
+    <!-- Skeleton placeholders -->
+    <div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+    <div class="skeleton-card"><div class="skeleton skeleton-thumb"></div><div class="skeleton-body"><div class="skeleton skeleton-line"></div><div class="skeleton skeleton-line short"></div></div></div>
+  </div>
+
+  <!-- AD MID -->
+  <div class="ad-banner ad-banner-mid">
+    <div class="ad-label"><strong>ADVERTISEMENT</strong><span>970 × 100</span></div>
+  </div>
+
+  <!-- Pagination -->
+  <div id="pagination"></div>
+</main>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-brand">
+        <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+        <p>Free browser games — play instantly, no downloads.</p>
+      </div>
+      <div class="footer-col"><h4>Sort By</h4><ul>
+        <li><a href="games.html?sort=popular">Most Popular</a></li>
+        <li><a href="games.html?sort=trending">Trending</a></li>
+        <li><a href="games.html?sort=newest">Newest</a></li>
+        <li><a href="games.html?sort=rating">Top Rated</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Links</h4><ul>
+        <li><a href="index.html">Home</a></li>
+        <li><a href="categories.html">Categories</a></li>
+        <li><a href="favorites.html">Favorites</a></li>
+        <li><a href="admin.html">Admin</a></li>
+      </ul></div>
+      <div class="footer-col"><h4>Categories</h4><ul>
+        <li><a href="categories.html?cat=Action">Action</a></li>
+        <li><a href="categories.html?cat=Puzzle">Puzzle</a></li>
+        <li><a href="categories.html?cat=Racing">Racing</a></li>
+        <li><a href="categories.html?cat=Shooter">Shooter</a></li>
+      </ul></div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2025 <span class="accent">Nexus Arcade</span></p>
+      <p class="font-mono">All games belong to their respective owners.</p>
+    </div>
+  </div>
+</footer>
+
+<script src="js/main.js"></script>
+<script src="js/games.js"></script>
+<script src="js/search.js"></script>
+<script src="js/favorites.js"></script>
+<script>
+/* ── Games Page Init ── */
+document.addEventListener('gamesLoaded', (e) => {
+  const games = e.detail;
+  const G = window.NexusGames;
+
+  // Build category tabs
+  const tabs = document.getElementById('category-tabs');
+  const cats = [...new Set(games.map(g => g.category))].sort();
+  cats.forEach(cat => {
+    const btn = document.createElement('button');
+    btn.className = 'filter-tab';
+    btn.dataset.cat = cat;
+    btn.textContent = cat;
+    btn.addEventListener('click', () => {
+      document.querySelectorAll('#category-tabs .filter-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      applyFilters();
+    });
+    tabs.appendChild(btn);
+  });
+
+  // Tab "All" click
+  tabs.querySelector('[data-cat="All"]').addEventListener('click', () => {
+    document.querySelectorAll('#category-tabs .filter-tab').forEach(b => b.classList.remove('active'));
+    tabs.querySelector('[data-cat="All"]').classList.add('active');
+    applyFilters();
+  });
+
+  // Sort change
+  document.getElementById('sort-select').addEventListener('change', applyFilters);
+
+  // Search
+  const searchInput = document.getElementById('page-search-input');
+  searchInput.addEventListener('input', window.NexusArcade.debounce(applyFilters, 200));
+
+  // Apply URL params
+  const params = new URLSearchParams(window.location.search);
+  const urlSearch = params.get('search');
+  const urlSort   = params.get('sort');
+  const urlCat    = params.get('cat');
+
+  if (urlSearch) searchInput.value = urlSearch;
+  if (urlSort)   document.getElementById('sort-select').value = urlSort;
+  if (urlCat) {
+    const catBtn = tabs.querySelector(`[data-cat="${urlCat}"]`);
+    if (catBtn) {
+      document.querySelectorAll('#category-tabs .filter-tab').forEach(b => b.classList.remove('active'));
+      catBtn.classList.add('active');
+    }
+  }
+
+  applyFilters();
+});
+
+function applyFilters() {
+  const games = window.NexusArcade.getGames();
+  const G = window.NexusGames;
+
+  const activeCat = document.querySelector('#category-tabs .filter-tab.active')?.dataset.cat || 'All';
+  const sort      = document.getElementById('sort-select').value;
+  const search    = document.getElementById('page-search-input').value.trim();
+
+  G.filteredGames = G.filterAndSortGames(games, { search, category: activeCat, sort });
+  G.currentPage   = 1;
+
+  const container  = document.getElementById('games-grid');
+  const pagination = document.getElementById('pagination');
+  const countEl    = document.getElementById('results-count');
+
+  const page = G.paginateGames(G.filteredGames, 1);
+  G.renderGamesGrid(container, page);
+  G.renderPagination(pagination, G.filteredGames.length, 1);
+
+  if (countEl) countEl.textContent = `${G.filteredGames.length} game${G.filteredGames.length !== 1 ? 's' : ''}`;
+}
+
+// Expose for pagination buttons generated in games.js
+window.applyFilters = applyFilters;
+window.changePage = function(page) {
+  const G = window.NexusGames;
+  G.currentPage = page;
+  const container  = document.getElementById('games-grid');
+  const pagination = document.getElementById('pagination');
+  const paginated  = G.paginateGames(G.filteredGames, page);
+  G.renderGamesGrid(container, paginated);
+  G.renderPagination(pagination, G.filteredGames.length, page);
+  container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+};
+</script>
+</body>
+</html>

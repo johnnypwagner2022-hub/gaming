@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel — Nexus Arcade</title>
+  <meta name="robots" content="noindex,nofollow">
+  <link rel="stylesheet" href="css/styles.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>
+    .admin-page { min-height: 100vh; }
+    .badge-pill {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      font-family: 'Share Tech Mono', monospace;
+    }
+    .badge-yes { background: rgba(0,255,136,0.15); color: var(--green); border: 1px solid rgba(0,255,136,0.3); }
+    .badge-no  { background: rgba(255,0,110,0.1);  color: var(--pink); border: 1px solid rgba(255,0,110,0.2); }
+    .login-overlay {
+      position: fixed; inset: 0;
+      background: var(--bg-void);
+      display: flex; align-items: center; justify-content: center;
+      z-index: 9999;
+    }
+    .login-box {
+      background: var(--bg-card2);
+      border: 1px solid var(--border-hot);
+      border-radius: var(--radius);
+      padding: 40px;
+      max-width: 380px;
+      width: 90%;
+      text-align: center;
+    }
+    .login-box h2 {
+      font-family: 'Orbitron', sans-serif;
+      color: var(--pink);
+      font-size: 1.2rem;
+      margin-bottom: 8px;
+    }
+    .login-box p { font-size: 0.85rem; color: var(--text-muted); margin-bottom: 24px; }
+    #admin-page-body { display: none; }
+  </style>
+</head>
+<body class="admin-page">
+
+<!-- LOGIN GATE -->
+<div class="login-overlay" id="login-overlay">
+  <div class="login-box">
+    <div style="font-size:2rem;margin-bottom:12px">🔐</div>
+    <h2>Admin Access</h2>
+    <p>Enter the admin password to continue.<br><small style="color:var(--cyan)">(Default: <code>admin123</code>)</small></p>
+    <div class="form-group" style="margin-bottom:16px;text-align:left">
+      <label>Password</label>
+      <input type="password" class="form-control" id="admin-pw-input" placeholder="Enter password…">
+    </div>
+    <button class="btn btn-pink" style="width:100%" onclick="attemptLogin()">🔓 Login</button>
+    <p style="margin-top:12px;font-size:0.75rem;color:var(--text-muted)">Change password in admin.html source.</p>
+  </div>
+</div>
+
+<!-- ADMIN BODY -->
+<div id="admin-page-body">
+<nav class="navbar">
+  <a href="index.html" class="nav-logo"><div class="logo-icon">🎮</div>NEXUS ARCADE</a>
+  <ul class="nav-links">
+    <li><a href="index.html">← Back to Site</a></li>
+  </ul>
+</nav>
+
+<div class="admin-header">
+  <h1>🛡️ Admin Panel</h1>
+  <div style="display:flex;gap:10px;align-items:center">
+    <span style="font-size:0.8rem;color:var(--text-muted);font-family:'Share Tech Mono',monospace">
+      Logged in as <span style="color:var(--green)">admin</span>
+    </span>
+    <button class="btn btn-ghost btn-sm" onclick="logout()" style="border-color:rgba(255,0,110,0.3);color:var(--pink)">Logout</button>
+  </div>
+</div>
+
+<div class="admin-grid">
+  <!-- Sidebar -->
+  <nav class="admin-sidebar">
+    <div class="admin-sidebar-link active" onclick="showTab('games-list')">📋 All Games</div>
+    <div class="admin-sidebar-link" onclick="showTab('add-game')">➕ Add Game</div>
+    <div class="admin-sidebar-link" onclick="showTab('stats')">📊 Stats</div>
+    <div class="admin-sidebar-link" onclick="showTab('export')">💾 Export / Import</div>
+  </nav>
+
+  <!-- Content -->
+  <div class="admin-content">
+
+    <!-- ALL GAMES TAB -->
+    <div id="tab-games-list">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px">
+        <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--text-bright)">
+          All Games <span id="admin-game-count" style="color:var(--text-muted);font-size:0.75em"></span>
+        </h2>
+        <div style="display:flex;gap:8px">
+          <input type="text" class="form-control" id="admin-search" placeholder="Search…" style="width:200px;padding:7px 12px"
+                 oninput="filterAdminTable()">
+          <button class="btn btn-primary btn-sm" onclick="showTab('add-game')">+ Add Game</button>
+        </div>
+      </div>
+      <div style="overflow-x:auto">
+        <table class="admin-table" id="admin-games-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Thumb</th>
+              <th>Title</th>
+              <th>Category</th>
+              <th>Rating</th>
+              <th>Plays</th>
+              <th>Featured</th>
+              <th>Trending</th>
+              <th>Actions</th>
+            </tr>
+          </thead>
+          <tbody id="admin-table-body"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ADD GAME TAB -->
+    <div id="tab-add-game" style="display:none">
+      <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--text-bright);margin-bottom:24px">
+        ➕ Add / Edit Game
+      </h2>
+      <form class="admin-form" id="game-form" onsubmit="saveGame(event)">
+        <div class="form-group">
+          <label>Title *</label>
+          <input type="text" class="form-control" id="f-title" required placeholder="Game title">
+        </div>
+        <div class="form-group">
+          <label>Category *</label>
+          <select class="form-control" id="f-category" required>
+            <option value="">Select…</option>
+            <option>Action</option><option>Shooter</option><option>Puzzle</option>
+            <option>Sports</option><option>Racing</option><option>Platformer</option>
+            <option>Multiplayer</option><option>Adventure</option><option>Strategy</option><option>Arcade</option>
+          </select>
+        </div>
+        <div class="form-group full">
+          <label>Game URL *</label>
+          <input type="url" class="form-control" id="f-url" required placeholder="https://…">
+        </div>
+        <div class="form-group full">
+          <label>Thumbnail URL</label>
+          <input type="url" class="form-control" id="f-thumbnail" placeholder="https://… (leave blank for auto)">
+        </div>
+        <div class="form-group">
+          <label>Rating (0–5)</label>
+          <input type="number" class="form-control" id="f-rating" min="0" max="5" step="0.1" value="4.5">
+        </div>
+        <div class="form-group">
+          <label>Plays (estimated)</label>
+          <input type="number" class="form-control" id="f-plays" value="1000">
+        </div>
+        <div class="form-group full">
+          <label>Description</label>
+          <textarea class="form-control" id="f-description" rows="3" placeholder="Brief game description…"></textarea>
+        </div>
+        <div class="form-group full">
+          <label>Controls</label>
+          <textarea class="form-control" id="f-controls" rows="2" placeholder="How to play / controls…"></textarea>
+        </div>
+        <div class="form-group">
+          <label>Tags (comma-separated)</label>
+          <input type="text" class="form-control" id="f-tags" placeholder="action, shooting, 3d">
+        </div>
+        <div class="form-group">
+          <label>Date Added</label>
+          <input type="date" class="form-control" id="f-date">
+        </div>
+        <div class="form-group" style="flex-direction:row;align-items:center;gap:12px">
+          <label style="text-transform:none;font-size:0.875rem;cursor:pointer">
+            <input type="checkbox" id="f-featured" style="margin-right:6px">Featured
+          </label>
+          <label style="text-transform:none;font-size:0.875rem;cursor:pointer">
+            <input type="checkbox" id="f-trending" style="margin-right:6px">Trending
+          </label>
+        </div>
+        <input type="hidden" id="f-id">
+        <div class="full" style="display:flex;gap:10px;margin-top:8px">
+          <button type="submit" class="btn btn-primary">💾 Save Game</button>
+          <button type="button" class="btn btn-ghost" onclick="resetForm()">✕ Clear</button>
+        </div>
+      </form>
+    </div>
+
+    <!-- STATS TAB -->
+    <div id="tab-stats" style="display:none">
+      <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--text-bright);margin-bottom:24px">📊 Site Stats</h2>
+      <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:16px;margin-bottom:32px" id="stats-cards"></div>
+      <div class="game-info-card">
+        <h4>Top 5 Most Played</h4>
+        <div id="top-played-list" style="font-size:0.85rem;margin-top:8px"></div>
+      </div>
+    </div>
+
+    <!-- EXPORT TAB -->
+    <div id="tab-export" style="display:none">
+      <h2 style="font-family:'Orbitron',sans-serif;font-size:1rem;color:var(--text-bright);margin-bottom:24px">💾 Export / Import</h2>
+      <div style="display:flex;flex-direction:column;gap:16px;max-width:500px">
+        <div class="game-info-card">
+          <h4>Export Games JSON</h4>
+          <p style="margin:8px 0;font-size:0.82rem">Download the current games database as a JSON file.</p>
+          <button class="btn btn-primary btn-sm" onclick="exportGames()">⬇️ Download games.json</button>
+        </div>
+        <div class="game-info-card">
+          <h4>Import Games JSON</h4>
+          <p style="margin:8px 0;font-size:0.82rem">Upload a games.json file to replace the current database.</p>
+          <input type="file" accept=".json" id="import-file" style="display:none" onchange="importGames(this)">
+          <button class="btn btn-ghost btn-sm" onclick="document.getElementById('import-file').click()">⬆️ Upload JSON</button>
+          <p style="font-size:0.72rem;color:var(--pink);margin-top:6px">⚠️ Warning: This will overwrite all custom game data.</p>
+        </div>
+        <div class="game-info-card">
+          <h4>Clear Local Data</h4>
+          <p style="margin:8px 0;font-size:0.82rem">Remove all favorites, recently played, and comment data.</p>
+          <button class="btn btn-ghost btn-sm" style="border-color:rgba(255,0,110,0.3);color:var(--pink)" onclick="clearUserData()">🗑️ Clear All User Data</button>
+        </div>
+      </div>
+    </div>
+
+  </div><!-- /admin-content -->
+</div><!-- /admin-grid -->
+</div><!-- /admin-page-body -->
+
+<script src="js/main.js"></script>
+<script src="js/games.js"></script>
+<script src="js/favorites.js"></script>
+<script>
+/* ── Auth ── */
+const ADMIN_PW = 'admin123'; // Change this!
+const AUTH_KEY = 'nexus_admin_auth';
+
+function attemptLogin() {
+  const pw = document.getElementById('admin-pw-input').value;
+  if (pw === ADMIN_PW) {
+    sessionStorage.setItem(AUTH_KEY, '1');
+    document.getElementById('login-overlay').style.display = 'none';
+    document.getElementById('admin-page-body').style.display = 'block';
+    initAdmin();
+  } else {
+    window.NexusArcade?.showToast('Incorrect password', 'error');
+    document.getElementById('admin-pw-input').value = '';
+    document.getElementById('admin-pw-input').focus();
+  }
+}
+function logout() {
+  sessionStorage.removeItem(AUTH_KEY);
+  location.reload();
+}
+document.getElementById('admin-pw-input')?.addEventListener('keydown', e => {
+  if (e.key === 'Enter') attemptLogin();
+});
+
+// Auto-login if session exists
+if (sessionStorage.getItem(AUTH_KEY)) {
+  document.getElementById('login-overlay').style.display = 'none';
+  document.getElementById('admin-page-body').style.display = 'block';
+}
+
+/* ── Custom games (stored in localStorage) ── */
+const CUSTOM_GAMES_KEY = 'nexus_custom_games';
+function getCustomGames() {
+  try { return JSON.parse(localStorage.getItem(CUSTOM_GAMES_KEY) || '[]'); }
+  catch { return []; }
+}
+function saveCustomGames(games) {
+  localStorage.setItem(CUSTOM_GAMES_KEY, JSON.stringify(games));
+}
+
+/* ── Admin Init ── */
+let adminGames = [];
+function initAdmin() {
+  document.addEventListener('gamesLoaded', (e) => {
+    adminGames = [...e.detail, ...getCustomGames()];
+    renderAdminTable(adminGames);
+    renderStats(adminGames);
+  });
+  // Set default date
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+}
+
+/* ── Tab switching ── */
+function showTab(name) {
+  ['games-list','add-game','stats','export'].forEach(t => {
+    document.getElementById(`tab-${t}`).style.display = t === name ? 'block' : 'none';
+  });
+  document.querySelectorAll('.admin-sidebar-link').forEach((el, i) => {
+    el.classList.toggle('active', i === ['games-list','add-game','stats','export'].indexOf(name));
+  });
+  if (name === 'stats') renderStats(adminGames);
+}
+
+/* ── Render admin table ── */
+function renderAdminTable(games) {
+  const tbody = document.getElementById('admin-table-body');
+  const countEl = document.getElementById('admin-game-count');
+  if (countEl) countEl.textContent = `(${games.length})`;
+  tbody.innerHTML = games.map(g => `
+    <tr>
+      <td class="font-mono" style="color:var(--text-muted)">#${g.id}</td>
+      <td><img src="${g.thumbnail}" alt="${g.title}" onerror="this.src='https://picsum.photos/seed/${g.id}/60/34'"></td>
+      <td style="color:var(--text-bright);font-weight:600">${window.NexusArcade.sanitize(g.title)}</td>
+      <td><span class="game-meta-pill">${g.category}</span></td>
+      <td style="color:var(--gold)">⭐ ${g.rating}</td>
+      <td class="font-mono" style="font-size:0.75rem">${window.NexusArcade.formatPlays(g.plays)}</td>
+      <td><span class="badge-pill ${g.featured ? 'badge-yes' : 'badge-no'}">${g.featured ? 'YES' : 'NO'}</span></td>
+      <td><span class="badge-pill ${g.trending ? 'badge-yes' : 'badge-no'}">${g.trending ? 'YES' : 'NO'}</span></td>
+      <td>
+        <div style="display:flex;gap:6px">
+          <button class="btn btn-ghost btn-sm" onclick="editGame(${g.id})">✏️</button>
+          <button class="btn btn-sm" style="background:rgba(255,0,110,0.15);color:var(--pink);border:1px solid rgba(255,0,110,0.3)" onclick="deleteGame(${g.id})">🗑️</button>
+        </div>
+      </td>
+    </tr>`).join('');
+}
+
+function filterAdminTable() {
+  const q = document.getElementById('admin-search').value.toLowerCase();
+  const filtered = adminGames.filter(g =>
+    g.title.toLowerCase().includes(q) || g.category.toLowerCase().includes(q)
+  );
+  renderAdminTable(filtered);
+}
+
+/* ── Add/Edit game ── */
+function saveGame(e) {
+  e.preventDefault();
+  const id = parseInt(document.getElementById('f-id').value || '0', 10);
+  const newGame = {
+    id: id || Date.now(),
+    title:       document.getElementById('f-title').value.trim(),
+    category:    document.getElementById('f-category').value,
+    url:         document.getElementById('f-url').value.trim(),
+    thumbnail:   document.getElementById('f-thumbnail').value.trim() ||
+                 `https://picsum.photos/seed/${Date.now()}/400/225`,
+    rating:      parseFloat(document.getElementById('f-rating').value),
+    plays:       parseInt(document.getElementById('f-plays').value, 10),
+    description: document.getElementById('f-description').value.trim(),
+    controls:    document.getElementById('f-controls').value.trim(),
+    tags:        document.getElementById('f-tags').value.split(',').map(t => t.trim()).filter(Boolean),
+    dateAdded:   document.getElementById('f-date').value,
+    featured:    document.getElementById('f-featured').checked,
+    trending:    document.getElementById('f-trending').checked,
+    slug:        document.getElementById('f-title').value.toLowerCase().replace(/[^a-z0-9]+/g,'-'),
+  };
+
+  let customs = getCustomGames();
+  if (id) {
+    const idx = customs.findIndex(g => g.id === id);
+    if (idx >= 0) customs[idx] = newGame;
+    else customs.push(newGame);
+  } else {
+    customs.push(newGame);
+  }
+  saveCustomGames(customs);
+  adminGames = [...window.NexusArcade.getGames(), ...customs];
+  renderAdminTable(adminGames);
+  resetForm();
+  showTab('games-list');
+  window.NexusArcade.showToast('Game saved!', 'success');
+}
+
+function editGame(id) {
+  const game = adminGames.find(g => g.id === id);
+  if (!game) return;
+  document.getElementById('f-id').value          = game.id;
+  document.getElementById('f-title').value        = game.title;
+  document.getElementById('f-category').value     = game.category;
+  document.getElementById('f-url').value          = game.url;
+  document.getElementById('f-thumbnail').value    = game.thumbnail;
+  document.getElementById('f-rating').value       = game.rating;
+  document.getElementById('f-plays').value        = game.plays;
+  document.getElementById('f-description').value  = game.description || '';
+  document.getElementById('f-controls').value     = game.controls || '';
+  document.getElementById('f-tags').value         = (game.tags || []).join(', ');
+  document.getElementById('f-date').value         = game.dateAdded || '';
+  document.getElementById('f-featured').checked   = !!game.featured;
+  document.getElementById('f-trending').checked   = !!game.trending;
+  showTab('add-game');
+}
+
+function deleteGame(id) {
+  if (!confirm('Delete this game? This removes it from the custom games list.')) return;
+  const customs = getCustomGames().filter(g => g.id !== id);
+  saveCustomGames(customs);
+  adminGames = [...window.NexusArcade.getGames(), ...customs];
+  renderAdminTable(adminGames);
+  window.NexusArcade.showToast('Game deleted.', 'info');
+}
+
+function resetForm() {
+  document.getElementById('game-form').reset();
+  document.getElementById('f-id').value = '';
+  document.getElementById('f-date').value = new Date().toISOString().split('T')[0];
+}
+
+/* ── Stats ── */
+function renderStats(games) {
+  const cats = {};
+  games.forEach(g => { cats[g.category] = (cats[g.category] || 0) + 1; });
+  const totalPlays = games.reduce((s, g) => s + g.plays, 0);
+  const avgRating  = (games.reduce((s, g) => s + g.rating, 0) / games.length).toFixed(2);
+
+  const statItems = [
+    { label: 'Total Games',    value: games.length,    color: 'var(--cyan)' },
+    { label: 'Total Plays',    value: window.NexusArcade.formatPlays(totalPlays), color: 'var(--green)' },
+    { label: 'Avg Rating',     value: avgRating + '⭐',  color: 'var(--gold)' },
+    { label: 'Categories',     value: Object.keys(cats).length, color: 'var(--pink)' },
+    { label: 'Featured Games', value: games.filter(g => g.featured).length, color: 'var(--cyan)' },
+    { label: 'Trending',       value: games.filter(g => g.trending).length, color: 'var(--orange)' },
+  ];
+  document.getElementById('stats-cards').innerHTML = statItems.map(s => `
+    <div class="game-info-card">
+      <div style="font-size:1.6rem;font-weight:700;color:${s.color};font-family:'Orbitron',sans-serif">${s.value}</div>
+      <div style="font-size:0.72rem;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.08em;margin-top:4px">${s.label}</div>
+    </div>`).join('');
+
+  const top5 = [...games].sort((a,b) => b.plays - a.plays).slice(0,5);
+  document.getElementById('top-played-list').innerHTML = top5.map((g, i) => `
+    <div style="display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid var(--border)">
+      <span>${['🥇','🥈','🥉','4.','5.'][i]} ${g.title}</span>
+      <span class="font-mono text-cyan" style="font-size:0.75rem">${window.NexusArcade.formatPlays(g.plays)}</span>
+    </div>`).join('');
+}
+
+/* ── Export/Import ── */
+function exportGames() {
+  const data = JSON.stringify(adminGames, null, 2);
+  const blob = new Blob([data], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'games.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  window.NexusArcade.showToast('games.json downloaded!', 'success');
+}
+
+function importGames(input) {
+  const file = input.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const imported = JSON.parse(e.target.result);
+      if (!Array.isArray(imported)) throw new Error('Not an array');
+      saveCustomGames(imported);
+      adminGames = imported;
+      renderAdminTable(adminGames);
+      window.NexusArcade.showToast(`Imported ${imported.length} games!`, 'success');
+    } catch (err) {
+      window.NexusArcade.showToast('Invalid JSON file', 'error');
+    }
+  };
+  reader.readAsText(file);
+}
+
+function clearUserData() {
+  if (!confirm('Clear ALL user data (favorites, recently played, comments, ratings)?')) return;
+  Object.keys(localStorage).forEach(k => {
+    if (k.startsWith('nexus_') && k !== CUSTOM_GAMES_KEY) localStorage.removeItem(k);
+  });
+  window.NexusArcade.showToast('All user data cleared.', 'info');
+}
+</script>
+</body>
+</html>
